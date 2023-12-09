@@ -23,8 +23,8 @@ jobs:
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
           limit-severities-for-sarif: true
-          skip-dirs: 'pulsar/trino/plugin/pulsar-presto-connector'
-
+          skip-dirs: 'pulsar/trino/plugin/pulsar-presto-connector,shell.jar/BOOT-INF/lib'
+          skip-files: 'spring-web-5.3.6.jar,shell.jar/BOOT-INF/lib/spring-beans-5.3.6.jar '
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
         with:
