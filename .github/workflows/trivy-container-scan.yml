@@ -1,0 +1,35 @@
+name: Trivy Container Scan
+
+on:
+  workflow_dispatch:
+
+env:
+  COMMIT_OWNER: ${{ github.event.pusher.name }}
+  COMMIT_SHA: ${{ github.sha }}
+
+jobs:
+  container_scan:
+    name: Trivy Docker image vulnerability scan
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v3
+
+      - name: Run Trivy vulnerability scanner in container mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'apachepulsar/pulsar:latest'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results
+        uses: actions/upload-artifact@v3
+        with:
+          path: 'trivy-results.sarif'
+          retention-days: 3
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
