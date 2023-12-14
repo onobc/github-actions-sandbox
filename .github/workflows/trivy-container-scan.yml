@@ -6,7 +6,7 @@ on:
       docker-image-ref:
         description: 'Docker image to scan (<repository>/<image>:<tag>)'
         required: false
-        default: 'apachepulsar/pulsar:latest'
+        default: 'apachepulsar/pulsar:3.1.1'
 
 jobs:
   container_scan:
@@ -19,13 +19,8 @@ jobs:
         with:
           image-ref: ${{ inputs.docker-image-ref }}
           scanners: vuln
-          format: 'sarif'
-          output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
           limit-severities-for-sarif: true
           skip-dirs: 'pulsar/trino/plugin/pulsar-presto-connector,shell.jar/BOOT-INF/lib'
           skip-files: 'spring-web-5.3.6.jar,shell.jar/BOOT-INF/lib/spring-beans-5.3.6.jar '
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'trivy-results.sarif'
+          exit-code: 1
