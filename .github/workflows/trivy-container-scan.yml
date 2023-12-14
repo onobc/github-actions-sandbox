@@ -16,6 +16,9 @@ jobs:
       - uses: actions/checkout@v3
       - name: Run Trivy vulnerability scanner in container mode
         uses: aquasecurity/trivy-action@master
+#        env:
+#          TRIVY_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+#          TRIVY_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         with:
           image-ref: ${{ inputs.docker-image-ref }}
           scanners: vuln
