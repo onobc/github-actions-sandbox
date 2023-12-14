@@ -1,0 +1,8 @@
+= Github Action Workflow Sandbox
+
+* https://github.com/aquasecurity/trivy-action[Trivy Github Action (repo)]
+* https://github.com/aquasecurity/trivy[Trivy (repo)]
+
+CAUTION: If you use the https://github.com/aquasecurity/trivy-action?tab=readme-ov-file#scan-ci-pipeline-w-trivy-config[Trivy config file] mode for the GHA **all** options must be specified in the `trivy.yaml`. There is a bug where all settings specified in the worfklow are ignored.
+
+NOTE: We may consider using the Trivy command line and ditching the Trivy GHA. This would allow us to execute the scan from the command line and not only in the GHA. The OWASP check takes this approach and then the GHA just calls the OWASP command line target.
