@@ -31,8 +31,8 @@ jobs:
 #
 #          skip-files: 'spring-web-5.3.6.jar,shell.jar/BOOT-INF/lib/spring-beans-5.3.6.jar '
 
-          format: 'github'
-          output: 'trivy-scan.json'
+          format: 'table'
+          output: 'trivy-scan.out'
           #output: 'trivy-scan-${{ inputs.docker-image-ref }}.json'
 
           exit-code: 0
@@ -48,7 +48,7 @@ jobs:
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
-          server_port: 587
+          server_port: 465
           secure: true
           username: ${{secrets.MAIL_USERNAME}}
           password: ${{secrets.MAIL_PASSWORD}}
@@ -58,4 +58,4 @@ jobs:
           body: Trivy scan from ${{github.repository}} ran
           ignore_cert: true
           # Optional attachments:
-          attachments: '${{ github.workspace }}/trivy-scan.json'
+          attachments: '${{ github.workspace }}/trivy-scan.out'
