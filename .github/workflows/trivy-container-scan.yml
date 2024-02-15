@@ -15,7 +15,6 @@ on:
           - table
           - json
           - sarif
-          - github
       severity:
         description: 'Severity to include (csv for multiple)'
         required: false
