@@ -6,7 +6,7 @@ on:
       docker-image-ref:
         description: 'Docker image to scan (<repository>/<image>:<tag>)'
         required: false
-        default: 'apachepulsar/pulsar:3.1.1'
+        default: 'apachepulsar/pulsar:3.2.0'
 
 jobs:
   container_scan:
