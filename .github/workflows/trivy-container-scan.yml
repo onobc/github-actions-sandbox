@@ -27,18 +27,20 @@ jobs:
     env:
       IMAGE_REF: '${{ matrix.docker-image }}:${{ matrix.docker-tag }}'
     steps:
-      - uses: actions/checkout@v3
-      - name: Print image ref
-        run: echo "*** $IMAGE_REF"
+      - id: prepare-vars
+        run: |
+          IMAGE_REF_CLEAN=${IMAGE_REF//(-|\.|\:|\/)/_}
+          echo "REPORT_FILENAME=trivy-scan-${IMAGE_REF_CLEAN}.${{ inputs.report-format }}" >>$GITHUB_ENV
+      - uses: actions/checkout@v4
       - name: Run Trivy vulnerability scanner in container mode
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: '${{ matrix.docker-image }}:${{ matrix.docker-tag }}'
+          image-ref: ${{ env.IMAGE_REF }}
           scanners: vuln
           severity: ${{ inputs.severity != 'ALL' && inputs.severity ||  'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'  }}
           limit-severities-for-sarif: true
           format: ${{ inputs.report-format }}
-          output: 'trivy-scan-${{ matrix.docker-image }}:${{ matrix.docker-tag }}.${{ inputs.report-format }}'
+          output: ${{ env.REPORT_FILENAME }}
           exit-code: 1
 
       - name: Upload Trivy report as a Github artifact
@@ -46,7 +48,7 @@ jobs:
         if: ${{ failure() }}
         with:
           name: trivy-vuln-report
-          path: '${{ github.workspace }}/trivy-scan-${{ matrix.docker-image }}:${{ matrix.docker-tag }}.${{ inputs.report-format }}'
+          path: '${{ github.workspace }}/${{ env.REPORT_FILENAME }}'
           retention-days: 15
 
       - name: Send mail
@@ -63,4 +65,4 @@ jobs:
           from: Github Trivy Container Scanner
           body: Trivy reported vulnerabilities (${{ inputs.severity }}) for ${{ env.IMAGE_REF }}
           ignore_cert: true
-          attachments: '${{ github.workspace }}/trivy-scan-${{ matrix.docker-image }}:${{ matrix.docker-tag }}.${{ inputs.report-format }}'
+          attachments: '${{ github.workspace }}/${{ env.REPORT_FILENAME }}'
