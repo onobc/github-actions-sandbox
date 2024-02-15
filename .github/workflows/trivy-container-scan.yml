@@ -30,7 +30,7 @@ jobs:
         with:
           image-ref: ${{ inputs.docker-image-ref }}
           scanners: vuln
-          severity: ${{ inputs.severity }}
+          severity: ${{ inputs.severity != '' && inputs.severity ||  'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'  }}
           limit-severities-for-sarif: true
           format: ${{ inputs.report-format }}
           output: 'trivy-scan.${{ inputs.report-format }}'
@@ -54,7 +54,7 @@ jobs:
           username: ${{secrets.MAIL_USERNAME}}
           password: ${{secrets.MAIL_PASSWORD}}
           subject: Trivy container scan results for ${{ inputs.docker-image-ref }}
-          to: chris.bono@gmail.com
+          to: chris.bono@gmail.com,lari.hotari@streamnative.io
           from: Github Trivy Container Scanner
           body: Trivy reported vulnerabilities (${{ inputs.severity }}) for ${{ inputs.docker-image-ref }}
           ignore_cert: true
