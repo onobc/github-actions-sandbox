@@ -7,7 +7,19 @@ on:
         description: 'Docker image to scan (<repository>/<image>:<tag>)'
         required: false
         default: 'apachepulsar/pulsar:3.2.0'
-
+      report-format:
+        description: 'Format of the report'
+        type: choice
+        default: table
+        options:
+          - table
+          - json
+          - sarif
+          - github
+      severity:
+        description: 'Severity to include (csv for multiple)'
+        required: false
+        default: 'CRITICAL,HIGH'
 jobs:
   container_scan:
     name: Trivy Docker image vulnerability scan
@@ -16,32 +28,21 @@ jobs:
       - uses: actions/checkout@v3
       - name: Run Trivy vulnerability scanner in container mode
         uses: aquasecurity/trivy-action@master
-#        env:
-#          TRIVY_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-#          TRIVY_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         with:
           image-ref: ${{ inputs.docker-image-ref }}
           scanners: vuln
-#          severity: 'CRITICAL,HIGH'
-#          limit-severities-for-sarif: true
-
-#          skip-dirs:
-#            - pulsar/trino/plugin/pulsar-presto-connector
-#            - shell.jar/BOOT-INF/lib
-#
-#          skip-files: 'spring-web-5.3.6.jar,shell.jar/BOOT-INF/lib/spring-beans-5.3.6.jar '
-
-          format: 'table'
-          output: 'trivy-scan.out'
+          severity: ${{ inputs.severity }}
+          limit-severities-for-sarif: true
+          format: ${{ inputs.report-format }}
+          output: 'trivy-scan.${{ inputs.report-format }}'
           #output: 'trivy-scan-${{ inputs.docker-image-ref }}.json'
-
           exit-code: 0
 
       - name: Upload Trivy report as a Github artifact
         uses: actions/upload-artifact@v4
         with:
           name: trivy-vuln-report
-          path: '${{ github.workspace }}/trivy-scan.json'
+          path: '${{ github.workspace }}/trivy-scan.${{ inputs.report-format }}'
           retention-days: 15
 
       - name: Send mail
@@ -52,10 +53,10 @@ jobs:
           secure: true
           username: ${{secrets.MAIL_USERNAME}}
           password: ${{secrets.MAIL_PASSWORD}}
-          subject: Trivy scan results
+          subject: Trivy container scan results for ${{ inputs.docker-image-ref }}
           to: chris.bono@gmail.com
-          from: Github Trivy Scanner
-          body: Trivy scan from ${{github.repository}} ran
+          from: Github Trivy Container Scanner
+          body: Trivy reported vulnerabilities (${{ inputs.severity }}) for ${{ inputs.docker-image-ref }}
           ignore_cert: true
           # Optional attachments:
-          attachments: '${{ github.workspace }}/trivy-scan.out'
+          attachments: '${{ github.workspace }}/trivy-scan.${{ inputs.report-format }}'
