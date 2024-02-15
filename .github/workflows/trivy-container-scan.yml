@@ -30,7 +30,7 @@ jobs:
       - id: prepare-vars
         shell: bash
         run: |
-          IMAGE_REF_CLEAN=${IMAGE_REF//(-|\.|\:|\/)/_}
+          IMAGE_REF_CLEAN="${IMAGE_REF//(-|\.|\:|\/)/_}"
           echo "IMAGE_REF_CLEAN = $IMAGE_REF_CLEAN"
           echo "REPORT_FILENAME=trivy-scan-${IMAGE_REF_CLEAN}.${{ inputs.report-format }}"
           echo "REPORT_FILENAME=trivy-scan-${IMAGE_REF_CLEAN}.${{ inputs.report-format }}" >>$GITHUB_ENV
