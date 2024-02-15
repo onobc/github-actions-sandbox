@@ -31,4 +31,31 @@ jobs:
 #
 #          skip-files: 'spring-web-5.3.6.jar,shell.jar/BOOT-INF/lib/spring-beans-5.3.6.jar '
 
-          exit-code: 1
+          format: 'github'
+          output: 'trivy-scan.json'
+          #output: 'trivy-scan-${{ inputs.docker-image-ref }}.json'
+
+          exit-code: 0
+
+      - name: Upload Trivy report as a Github artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-vuln-report
+          path: '${{ github.workspace }}/trivy-scan.json'
+          retention-days: 15
+
+      - name: Send mail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          secure: true
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: Trivy scan results
+          to: chris.bono@gmail.com
+          from: Github Trivy Scanner
+          body: Trivy scan from ${{github.repository}} ran
+          ignore_cert: true
+          # Optional attachments:
+          attachments: '${{ github.workspace }}/trivy-scan.json'
