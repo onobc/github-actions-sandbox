@@ -30,6 +30,8 @@ jobs:
       - id: prepare-vars
         run: |
           IMAGE_REF_CLEAN=${IMAGE_REF//(-|\.|\:|\/)/_}
+          echo "*** IMAGE_REF_CLEAN = $IMAGE_REF_CLEAN"
+          echo "REPORT_FILENAME=trivy-scan-${IMAGE_REF_CLEAN}.${{ inputs.report-format }}"
           echo "REPORT_FILENAME=trivy-scan-${IMAGE_REF_CLEAN}.${{ inputs.report-format }}" >>$GITHUB_ENV
       - uses: actions/checkout@v4
       - name: Run Trivy vulnerability scanner in container mode
