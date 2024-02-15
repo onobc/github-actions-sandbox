@@ -22,8 +22,8 @@ jobs:
         with:
           image-ref: ${{ inputs.docker-image-ref }}
           scanners: vuln
-          severity: 'CRITICAL,HIGH'
-          limit-severities-for-sarif: true
+#          severity: 'CRITICAL,HIGH'
+#          limit-severities-for-sarif: true
 
 #          skip-dirs:
 #            - pulsar/trino/plugin/pulsar-presto-connector
