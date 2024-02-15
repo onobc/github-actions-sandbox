@@ -34,11 +34,11 @@ jobs:
           limit-severities-for-sarif: true
           format: ${{ inputs.report-format }}
           output: 'trivy-scan.${{ inputs.report-format }}'
-          #output: 'trivy-scan-${{ inputs.docker-image-ref }}.json'
-          exit-code: 0
+          exit-code: 1
 
       - name: Upload Trivy report as a Github artifact
         uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
         with:
           name: trivy-vuln-report
           path: '${{ github.workspace }}/trivy-scan.${{ inputs.report-format }}'
@@ -46,6 +46,7 @@ jobs:
 
       - name: Send mail
         uses: dawidd6/action-send-mail@v3
+        if: ${{ failure() }}
         with:
           server_address: smtp.gmail.com
           server_port: 465
