@@ -30,7 +30,7 @@ jobs:
         with:
           image-ref: ${{ inputs.docker-image-ref }}
           scanners: vuln
-          severity: ${{ inputs.severity != '' && inputs.severity ||  'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'  }}
+          severity: ${{ inputs.severity != 'ALL' && inputs.severity ||  'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'  }}
           limit-severities-for-sarif: true
           format: ${{ inputs.report-format }}
           output: 'trivy-scan.${{ inputs.report-format }}'
