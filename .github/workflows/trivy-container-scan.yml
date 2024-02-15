@@ -16,7 +16,7 @@ on:
           - json
           - sarif
       severity:
-        description: 'Severity to include (csv for multiple)'
+        description: "Severities to include (comma-separated or 'ALL' to include all)"
         required: false
         default: 'CRITICAL,HIGH'
 jobs:
