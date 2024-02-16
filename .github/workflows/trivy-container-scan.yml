@@ -25,10 +25,10 @@ jobs:
       fail-fast: false
       matrix:
         docker-image:
-          - apachepulsar/pulsar
-          - apachepulsar/pulsar-all
+          - 'apachepulsar/pulsar'
+          - 'apachepulsar/pulsar-all'
         docker-tag:
-          - 3.2.0
+          - '3.2.0'
     env:
       IMAGE_REF: '${{ matrix.docker-image }}:${{ matrix.docker-tag }}'
     steps:
