@@ -35,6 +35,7 @@ jobs:
           echo "report_filename=trivy-scan-${IMAGE_REF_CLEAN}.${{ inputs.report-format }}" >>$GITHUB_OUTPUT
 
       - name: Get color
+        shell: bash
         env:
           RF: ${{ steps.prepare-vars.outputs.report_filename }}
           IRC: ${{ steps.prepare-vars.outputs.image_ref_clean }}
