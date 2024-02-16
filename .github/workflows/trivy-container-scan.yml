@@ -44,15 +44,6 @@ jobs:
           format: ${{ inputs.report-format }}
           output: ${{ env.REPORT_FILENAME }}
           exit-code: 1
-
-      - name: Upload Trivy report as a Github artifact
-        uses: actions/upload-artifact@v4
-        if: ${{ failure() }}
-        with:
-          name: trivy-vuln-report-${{ env.IMAGE_REF_CLEAN }}
-          path: '${{ github.workspace }}/${{ env.REPORT_FILENAME }}'
-          retention-days: 15
-
       - name: Send mail
         uses: dawidd6/action-send-mail@v3
         if: ${{ failure() }}
@@ -68,3 +59,14 @@ jobs:
           body: Trivy reported vulnerabilities (${{ inputs.severity }}) for ${{ env.IMAGE_REF }}
           ignore_cert: true
           attachments: '${{ github.workspace }}/${{ env.REPORT_FILENAME }}'
+  upload_report:
+    name: Upload Trivy report as a Github artifact
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    needs: container_scan
+    steps:
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-vuln-report
+        path: '${{ github.workspace }}/trivy-scan-*'
+        retention-days: 15
