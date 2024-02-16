@@ -32,8 +32,9 @@ jobs:
         run: |
           IMAGE_REF_CLEAN="$(echo $IMAGE_REF | sed 's/-/_/g; s/\./_/g; s/:/_/g; s/\//_/g')"
           echo "**** $IMAGE_REF_CLEAN"
-          echo "image_ref_clean=x${IMAGE_REF_CLEAN}x" >>GITHUB_OUTPUT
-          echo "report_filename=trivy-scan-${IMAGE_REF_CLEAN}.${{ inputs.report-format }}" >>$GITHUB_OUTPUT
+          echo "image_ref_clean=$IMAGE_REF_CLEAN" >> "$GITHUB_OUTPUT"
+          echo "report_filename=trivy-scan-${IMAGE_REF_CLEAN}.${{ inputs.report-format }}" >> "$GITHUB_OUTPUT"
+          echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
 
       - id: show-vars
         shell: bash
@@ -43,6 +44,7 @@ jobs:
         run: |
           echo "RF=$RF"
           echo "RC=$RC"
+          echo "### Hello world! :boom:" >> $GITHUB_STEP_SUMMARY
 
       - uses: actions/checkout@v4
 
