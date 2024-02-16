@@ -38,7 +38,6 @@ jobs:
           IMAGE_REF_CLEAN="$(echo $IMAGE_REF | sed 's/-/_/g; s/\./_/g; s/:/_/g; s/\//_/g')"
           echo "image_ref_clean=$IMAGE_REF_CLEAN" >> "$GITHUB_OUTPUT"
           echo "report_filename=trivy-scan-$IMAGE_REF_CLEAN.${{ inputs.report-format }}" >> "$GITHUB_OUTPUT"
-      - uses: actions/checkout@v4
       - name: Run Trivy vulnerability scanner in container mode
         uses: aquasecurity/trivy-action@master
         with:
