@@ -31,17 +31,18 @@ jobs:
         shell: bash
         run: |
           IMAGE_REF_CLEAN="$(echo $IMAGE_REF | sed 's/-/_/g; s/\./_/g; s/:/_/g; s/\//_/g')"
-          echo "image_ref_clean=${IMAGE_REF_CLEAN}" >>GITHUB_OUTPUT
+          echo "**** $IMAGE_REF_CLEAN"
+          echo "image_ref_clean=x${IMAGE_REF_CLEAN}x" >>GITHUB_OUTPUT
           echo "report_filename=trivy-scan-${IMAGE_REF_CLEAN}.${{ inputs.report-format }}" >>$GITHUB_OUTPUT
 
       - id: show-vars
         shell: bash
         env:
           RF: ${{ steps.prepare-vars.outputs.report_filename }}
-          IRC: ${{ steps.prepare-vars.outputs.image_ref_clean }}
+          RC: ${{ steps.prepare-vars.outputs.image_ref_clean }}
         run: |
-          echo "RF=$RF
-          echo "IRC=$IRC
+          echo "RF=$RF"
+          echo "RC=$RC"
 
       - uses: actions/checkout@v4
 
