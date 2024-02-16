@@ -34,6 +34,14 @@ jobs:
           echo "image_ref_clean=${IMAGE_REF_CLEAN}" >>GITHUB_OUTPUT
           echo "report_filename=trivy-scan-${IMAGE_REF_CLEAN}.${{ inputs.report-format }}" >>$GITHUB_OUTPUT
 
+      - name: Get color
+        env:
+          RF: ${{ steps.prepare-vars.outputs.report_filename }}
+          IRC: ${{ steps.prepare-vars.outputs.image_ref_clean }}
+          run: |
+            echo "RF=$RF
+            echo "IRC=$IRC
+
       - uses: actions/checkout@v4
 
       - name: Run Trivy vulnerability scanner in container mode
