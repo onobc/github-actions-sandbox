@@ -31,9 +31,11 @@ jobs:
         shell: bash
         run: |
           IMAGE_REF_CLEAN="$(echo $IMAGE_REF | sed 's/-/_/g; s/\./_/g; s/:/_/g; s/\//_/g')"
-          echo "IMAGE_REF_CLEAN=${IMAGE_REF_CLEAN}" >>GITHUB_ENV
-          echo "REPORT_FILENAME=trivy-scan-${IMAGE_REF_CLEAN}.${{ inputs.report-format }}" >>$GITHUB_ENV
+          echo "image_ref_clean=${IMAGE_REF_CLEAN}" >>GITHUB_OUTPUT
+          echo "report_filename=trivy-scan-${IMAGE_REF_CLEAN}.${{ inputs.report-format }}" >>$GITHUB_OUTPUT
+
       - uses: actions/checkout@v4
+
       - name: Run Trivy vulnerability scanner in container mode
         uses: aquasecurity/trivy-action@master
         with:
@@ -42,9 +44,10 @@ jobs:
           severity: ${{ inputs.severity != 'ALL' && inputs.severity ||  'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'  }}
           limit-severities-for-sarif: true
           format: ${{ inputs.report-format }}
-          output: ${{ env.REPORT_FILENAME }}
+          output: ${{ steps.prepare-vars.outputs.report_filename }}
           exit-code: 1
-      - name: Send mail
+
+      - name: Email Trivy report
         uses: dawidd6/action-send-mail@v3
         if: ${{ failure() }}
         with:
@@ -58,15 +61,12 @@ jobs:
           from: Github Trivy Container Scanner
           body: Trivy reported vulnerabilities (${{ inputs.severity }}) for ${{ env.IMAGE_REF }}
           ignore_cert: true
-          attachments: '${{ github.workspace }}/${{ env.REPORT_FILENAME }}'
-  upload_report:
-    name: Upload Trivy report as a Github artifact
-    if: ${{ failure() }}
-    runs-on: ubuntu-latest
-    needs: container_scan
-    steps:
-      - uses: actions/upload-artifact@v4
+          attachments: '${{ github.workspace }}/${{ steps.prepare-vars.outputs.report_filename }}'
+
+      - name: Upload Trivy report
+        uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
         with:
-          name: trivy-vuln-report
-          path: '${{ github.workspace }}/trivy-scan-*'
+          name: trivy-vuln-report-${{ matrix.docker-image }}:${{ matrix.docker-tag }}
+          path: '${{ github.workspace }}/${{ steps.prepare-vars.outputs.image_ref_clean }}'
           retention-days: 15
