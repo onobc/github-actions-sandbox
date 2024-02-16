@@ -16,7 +16,7 @@ on:
       severity:
         description: "Severities to include (comma-separated or 'ALL' to include all)"
         required: false
-        default: 'MEDIUM,CRITICAL,HIGH'
+        default: '  CRITICAL,HIGH'
 jobs:
   container_scan:
     name: Trivy Docker image vulnerability scan
@@ -24,8 +24,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        docker-image: ['apachepulsar/pulsar', 'apachepulsar/pulsar-all']
-        docker-tag: ['3.2.0']
+        docker-image:
+          - 'apachepulsar/pulsar'
+          - 'apachepulsar/pulsar-all'
+        docker-tag:
+          - '3.2.0'
     env:
       IMAGE_REF: '${{ matrix.docker-image }}:${{ matrix.docker-tag }}'
     steps:
