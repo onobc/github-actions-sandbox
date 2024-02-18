@@ -1,8 +1,6 @@
 name: Trivy Container Scan
 
 on:
-  schedule:
-    - cron: '0 8 * * *' # Every day at 8am UTC
   workflow_dispatch:
     inputs:
       report-format:
@@ -16,7 +14,7 @@ on:
       severity:
         description: "Severities to include (comma-separated or 'ALL' to include all)"
         required: false
-        default: '  CRITICAL,HIGH'
+        default: 'CRITICAL,HIGH'
 jobs:
   container_scan:
     name: Trivy Docker image vulnerability scan
