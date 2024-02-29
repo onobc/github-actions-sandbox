@@ -68,13 +68,6 @@ jobs:
           name: trivy-vuln-report-${{ steps.prepare-vars.outputs.image_ref_clean }}
           path: '${{ github.workspace }}/${{ steps.prepare-vars.outputs.report_filename }}'
           retention-days: 15
-      - name: test-echo-step
-        if: ${{ failure() }}
-        shell: bash
-        run: |
-          echo "***** FORMAT ${{ inputs.report-format }} equal ? ${{ inputs.report-format == 'sarif' }}"
-          echo "***** SCANNING UPLOAD ${{ github.workspace }}/${{ steps.prepare-vars.outputs.report_filename }}'
-
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
         if: ${{ failure() && inputs.report-format == 'sarif' }}
