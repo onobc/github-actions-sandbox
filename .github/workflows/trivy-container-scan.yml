@@ -72,11 +72,11 @@ jobs:
         if: ${{ failure() }}
         shell: bash
         run: |
-          echo "***** FORMAT ${{ inputs.report.format }} equal ? ${{ inputs.report.format == 'sarif' }}"
+          echo "***** FORMAT ${{ inputs.report-format }} equal ? ${{ inputs.report-format == 'sarif' }}"
           echo "***** SCANNING UPLOAD ${{ github.workspace }}/${{ steps.prepare-vars.outputs.report_filename }}'
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
-        if: ${{ failure() && inputs.report.format == 'sarif' }}
+        if: ${{ failure() && inputs.report-format == 'sarif' }}
         with:
           sarif_file: '${{ github.workspace }}/${{ steps.prepare-vars.outputs.report_filename }}'
